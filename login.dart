@@ -41,40 +41,47 @@ class _LoginPageState extends State<LoginPage> {
         child: Center(
           child: Padding(
             padding: const EdgeInsets.all(16.0),
-            child: Column(
-              mainAxisSize: MainAxisSize.min, // Centra verticalmente
-              children: [
-                const Icon(Icons.lock, size: 80, color: Colors.white),
-                const SizedBox(height: 20),
-                TextField(
-                  controller: _userController,
-                  decoration: const InputDecoration(
-                    filled: true,
-                    fillColor: Colors.white70,
-                    labelText: "Usuario",
-                    prefixIcon: Icon(Icons.person),
-                    border: OutlineInputBorder(),
-                  ),
-                ),
-                const SizedBox(height: 10),
-                TextField(
-                  controller: _passController,
-                  obscureText: true,
-                  decoration: const InputDecoration(
-                    filled: true,
-                    fillColor: Colors.white70,
-                    labelText: "Contraseña",
-                    prefixIcon: Icon(Icons.lock),
-                    border: OutlineInputBorder(),
-                  ),
-                ),
-                const SizedBox(height: 20),
-                ElevatedButton(
-                  onPressed: _login,
-                  child: const Text("Iniciar Sesión"),
-                ),
-              ],
-            ),
+child: Column(
+  mainAxisSize: MainAxisSize.min, // Centra verticalmente
+  children: [
+    const Text(
+      "Bienvenido, ingresa tus datos para continuar",
+      style: TextStyle(color: Colors.white, fontSize: 16),
+      textAlign: TextAlign.center,
+    ),
+    const SizedBox(height: 10),
+    const Icon(Icons.lock, size: 80, color: Colors.white),
+    const SizedBox(height: 20),
+    TextField(
+      controller: _userController,
+      decoration: const InputDecoration(
+        filled: true,
+        fillColor: Colors.white70,
+        labelText: "Usuario",
+        prefixIcon: Icon(Icons.person),
+        border: OutlineInputBorder(),
+      ),
+    ),
+    const SizedBox(height: 10),
+    TextField(
+      controller: _passController,
+      obscureText: true,
+      decoration: const InputDecoration(
+        filled: true,
+        fillColor: Colors.white70,
+        labelText: "Contraseña",
+        prefixIcon: Icon(Icons.lock),
+        border: OutlineInputBorder(),
+      ),
+    ),
+    const SizedBox(height: 20),
+    ElevatedButton(
+      onPressed: _login,
+      child: const Text("Iniciar Sesión"),
+    ),
+  ],
+),
+
           ),
         ),
       ),
