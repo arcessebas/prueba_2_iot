@@ -13,20 +13,28 @@ class _LoginPageState extends State<LoginPage> {
   final TextEditingController _passController = TextEditingController();
 
   void _login() {
-    String user = _userController.text;
-    String pass = _passController.text;
+  String user = _userController.text.trim();
+  String pass = _passController.text.trim();
 
-    if (user == "admin" && pass == "1234") {
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (context) => HomePage(username: user)),
-      );
-    } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("Usuario o contraseña incorrectos")),
-      );
-    }
+  if (user.isEmpty || pass.isEmpty) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text("Por favor ingresa usuario y contraseña")),
+    );
+    return; // salir de la función
   }
+
+  if (user == "admin" && pass == "1234") {
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(builder: (context) => HomePage(username: user)),
+    );
+  } else {
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text("Usuario o contraseña incorrectos")),
+    );
+  }
+}
+
 
   @override
   Widget build(BuildContext context) {
