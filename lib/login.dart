@@ -13,28 +13,47 @@ class _LoginPageState extends State<LoginPage> {
   final TextEditingController _passController = TextEditingController();
 
   void _login() {
-  String user = _userController.text.trim();
-  String pass = _passController.text.trim();
+    String email = _userController.text.trim();
+    String pass = _passController.text.trim();
 
-  if (user.isEmpty || pass.isEmpty) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text("Por favor ingresa usuario y contraseña")),
-    );
-    return; // salir de la función
+    // Validación de campos vacíos
+    if (email.isEmpty || pass.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Por favor ingresa correo y contraseña")),
+      );
+      return;
+    }
+
+    // Validación de formato de correo con "@"
+    if (!email.contains("@")) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("El correo debe contener '@'")),
+      );
+      return;
+    }
+
+    // Validación de longitud mínima de contraseña
+    if (pass.length < 6) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text("La contraseña debe tener al menos 6 caracteres"),
+        ),
+      );
+      return;
+    }
+
+    // Credenciales de prueba
+    if (email == "admin@demo.com" && pass == "123456") {
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => HomePage(username: email)),
+      );
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Correo o contraseña incorrectos")),
+      );
+    }
   }
-
-  if (user == "admin" && pass == "1234") {
-    Navigator.pushReplacement(
-      context,
-      MaterialPageRoute(builder: (context) => HomePage(username: user)),
-    );
-  } else {
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text("Usuario o contraseña incorrectos")),
-    );
-  }
-}
-
 
   @override
   Widget build(BuildContext context) {
@@ -59,11 +78,12 @@ class _LoginPageState extends State<LoginPage> {
                   decoration: const InputDecoration(
                     filled: true,
                     fillColor: Colors.white70,
-                    labelText: "Usuario",
-                    prefixIcon: Icon(Icons.person),
+                    labelText: "Correo electrónico",
+                    prefixIcon: Icon(Icons.email),
                     border: OutlineInputBorder(),
                   ),
                 ),
+
                 const SizedBox(height: 10),
                 TextField(
                   controller: _passController,
