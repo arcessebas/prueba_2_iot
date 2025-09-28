@@ -12,31 +12,35 @@ class _EvaluacionesPageState extends State<EvaluacionesPage> {
   List<Map<String, dynamic>> evaluaciones = [
     {
       "titulo": "Matemáticas - Álgebra",
-      "fecha": DateTime(2025, 9, 26),
+      "fecha": DateTime(2025, 10, 26, 00, 00),
       "nota": 70,
       "estado": "Pendiente",
     },
     {
       "titulo": "Lenguaje - Redacción",
-      "fecha": DateTime(2025, 9, 27),
-      "nota": 85,
+      "fecha": DateTime(2025, 9, 27, 00, 00),
+      "nota": 45,
       "estado": "Pendiente",
     },
     {
       "titulo": "Historia - Edad Media",
-      "fecha": DateTime(2025, 9, 28),
-      "nota": 90,
+      "fecha": DateTime(2025, 10, 28, 00, 00),
+      "nota": 70,
       "estado": "Pendiente",
     },
   ];
-
   // Función para actualizar el estado según la fecha o el usuario
   void actualizarEstado(int index) {
     setState(() {
-      DateTime hoy = DateTime.now();
+      DateTime hoy = DateTime(
+        DateTime.now().day,
+        DateTime.now().month,
+        DateTime.now().year,
+      );
+      DateTime fechahoyeval = evaluaciones[index]["fecha"];
       var eval = evaluaciones[index];
 
-      if (eval["estado"] != "Completada" && eval["fecha"].isBefore(hoy)) {
+      if (eval["estado"] != "Completada" && fechahoyeval.isBefore(hoy)) {
         eval["estado"] = "Vencida";
       } else if (eval["estado"] == "Pendiente") {
         eval["estado"] = "Completada";
@@ -55,39 +59,147 @@ class _EvaluacionesPageState extends State<EvaluacionesPage> {
         return Colors.red;
       case "Pendiente":
       default:
-        return Colors.orange;
+        return const Color.fromARGB(255, 213, 248, 11);
     }
   }
+
+  String barrabusqueda = "";
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text("Evaluaciones")),
+      appBar: AppBar(
+        title: const Text("Evaluaciones"),
+        backgroundColor: Colors.deepPurple,
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.search),
+            onPressed: () {
+              showSearch(
+                context: context,
+                delegate: MySearchDelegate(evaluaciones),
+              );
+            },
+          ),
+        ],
+      ),
       body: ListView.builder(
         itemCount: evaluaciones.length,
         itemBuilder: (context, index) {
           var eval = evaluaciones[index];
-          return Card(
-            margin: const EdgeInsets.all(8),
-            color: colorEstado(eval["estado"]).withOpacity(0.2),
+          if (eval["estado"] != "Completada" &&
+              eval["fecha"].isBefore(DateTime.now())) {
+            eval["estado"] = "Vencida";
+          }
+          return AnimatedContainer(
+            duration: const Duration(seconds: 2),
+            color: colorEstado(eval["estado"]).withOpacity(0.1),
             child: ListTile(
               title: Text(eval["titulo"]),
               subtitle: Text(
-                "Fecha: ${eval["fecha"].day}/${eval["fecha"].month}/${eval["fecha"].year} - Nota: ${eval["nota"]} - Estado: ${eval["estado"]}",
+                "Fecha: ${eval["fecha"].toLocal().toString().split(' ')[0]} - Nota: ${eval["nota"]}",
               ),
-              trailing: IconButton(
-                icon: Icon(
-                  eval["estado"] == "Completada"
-                      ? Icons.check_box
-                      : Icons.check_box_outline_blank,
-                  color: colorEstado(eval["estado"]),
-                ),
-                onPressed: () => actualizarEstado(index),
+              trailing: Text(
+                eval["estado"],
+                style: TextStyle(color: colorEstado(eval["estado"])),
               ),
+              onTap: () => actualizarEstado(index),
             ),
           );
         },
       ),
+    );
+  }
+}
+
+class MySearchDelegate extends SearchDelegate {
+  final List<Map<String, dynamic>> evaluaciones;
+
+  MySearchDelegate(this.evaluaciones);
+  @override
+  String get searchFieldLabel => 'Buscar evaluaciones';
+
+  @override
+  List<Widget>? buildActions(BuildContext context) {
+    return [
+      IconButton(
+        icon: const Icon(Icons.clear),
+        onPressed: () {
+          query = '';
+        },
+      ),
+    ];
+  }
+
+  @override
+  Widget? buildLeading(BuildContext context) {
+    return IconButton(
+      icon: const Icon(Icons.arrow_back),
+      onPressed: () {
+        close(context, null);
+      },
+    );
+  }
+
+  @override
+  Widget buildResults(BuildContext context) {
+    final results = evaluaciones.where(
+      (eval) => eval["titulo"].toLowerCase().contains(query.toLowerCase()),
+    );
+
+    return ListView(
+      children: results
+          .map<ListTile>(
+            (eval) => ListTile(
+              title: Text(eval["titulo"]),
+              subtitle: Text(
+                "Fecha: ${eval["fecha"].toLocal().toString().split(' ')[0]} - Nota: ${eval["nota"]}",
+              ),
+              trailing: Text(
+                eval["estado"],
+                style: TextStyle(
+                  color: eval["estado"] == "Completada"
+                      ? Colors.green
+                      : eval["estado"] == "Vencida"
+                      ? Colors.red
+                      : const Color.fromARGB(255, 213, 248, 11),
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+          )
+          .toList(),
+    );
+  }
+
+  @override
+  Widget buildSuggestions(BuildContext context) {
+    final suggestions = evaluaciones.where(
+      (eval) => eval["titulo"].toLowerCase().contains(query.toLowerCase()),
+    );
+
+    return ListView(
+      children: suggestions
+          .map<ListTile>(
+            (eval) => ListTile(
+              title: Text(eval["titulo"]),
+              subtitle: Text(
+                "Fecha: ${eval["fecha"].toLocal().toString().split(' ')[0]} - Nota: ${eval["nota"]}",
+              ),
+              trailing: Text(
+                eval["estado"],
+                style: TextStyle(
+                  color: eval["estado"] == "Completada"
+                      ? Colors.green
+                      : eval["estado"] == "Vencida"
+                      ? Colors.red
+                      : const Color.fromARGB(255, 213, 248, 11),
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+          )
+          .toList(),
     );
   }
 }
