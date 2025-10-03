@@ -50,6 +50,97 @@ class _EvaluacionesPageState extends State<EvaluacionesPage> {
     });
   }
 
+  // Función para mostrar formulario
+  void _mostrarFormulario() {
+    String titulo = "";
+    int nota = 0;
+    DateTime? fechaSeleccionada;
+    String estado = "Pendiente";
+
+    showDialog(
+      context: context,
+      builder: (context) {
+        return StatefulBuilder(
+          builder: (context, setStateDialog) {
+            return AlertDialog(
+              title: const Text("Agregar nueva evaluación"),
+              content: SingleChildScrollView(
+                child: Column(
+                  children: [
+                    // Campo Título
+                    TextField(
+                      decoration: const InputDecoration(labelText: "Título"),
+                      onChanged: (value) => titulo = value,
+                    ),
+
+                    // Campo Nota
+                    TextField(
+                      decoration: const InputDecoration(labelText: "Nota"),
+                      keyboardType: TextInputType.number,
+                      onChanged: (value) => nota = int.tryParse(value) ?? 0,
+                    ),
+
+                    const SizedBox(height: 16),
+
+                    // Selector de Fecha
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          fechaSeleccionada == null
+                              ? "Sin fecha"
+                              : "Fecha: ${fechaSeleccionada.toString().substring(0, 10)}",
+                        ),
+                        ElevatedButton(
+                          onPressed: () async {
+                            DateTime? pickedDate = await showDatePicker(
+                              context: context,
+                              initialDate: DateTime.now(),
+                              firstDate: DateTime(2000),
+                              lastDate: DateTime(2100),
+                            );
+                            if (pickedDate != null) {
+                              setStateDialog(() {
+                                fechaSeleccionada = pickedDate;
+                              });
+                            }
+                          },
+                          child: const Text("Seleccionar fecha"),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.pop(context),
+                  child: const Text("Cancelar"),
+                ),
+                ElevatedButton(
+                  onPressed: () {
+                    if (titulo.isNotEmpty && fechaSeleccionada != null) {
+                      setState(() {
+                        evaluaciones.add({
+                          "titulo": titulo,
+                          "fecha": fechaSeleccionada,
+                          "nota": nota,
+                          "estado": estado,
+                        });
+                      });
+                      Navigator.pop(context);
+                    }
+                  },
+                  child: const Text("Agregar"),
+                ),
+              ],
+            );
+          },
+        );
+      },
+    );
+  }
+
   // Función para obtener color según el estado
   Color colorEstado(String estado) {
     switch (estado) {
@@ -70,7 +161,7 @@ class _EvaluacionesPageState extends State<EvaluacionesPage> {
     return Scaffold(
       appBar: AppBar(
         title: const Text("Evaluaciones"),
-        backgroundColor: Colors.deepPurple,
+        backgroundColor: const Color.fromARGB(255, 93, 2, 250),
         actions: [
           IconButton(
             icon: const Icon(Icons.search),
@@ -99,14 +190,33 @@ class _EvaluacionesPageState extends State<EvaluacionesPage> {
               subtitle: Text(
                 "Fecha: ${eval["fecha"].toLocal().toString().split(' ')[0]} - Nota: ${eval["nota"]}",
               ),
-              trailing: Text(
-                eval["estado"],
-                style: TextStyle(color: colorEstado(eval["estado"])),
+              trailing: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    eval["estado"],
+                    style: TextStyle(color: colorEstado(eval["estado"])),
+                  ),
+                  IconButton(
+                    icon: const Icon(Icons.delete, color: Colors.red),
+                    onPressed: () {
+                      setState(() {
+                        evaluaciones.removeAt(index); // 👈 elimina la tarea
+                      });
+                    },
+                  ),
+                ],
               ),
               onTap: () => actualizarEstado(index),
             ),
           );
         },
+      ), // 👈 aquí cierro bien el ListView.builder
+      floatingActionButton: FloatingActionButton(
+        onPressed: _mostrarFormulario,
+        child: const Icon(Icons.add),
+        backgroundColor: const Color.fromARGB(255, 93, 2, 250), // morado
+        foregroundColor: Colors.white, // ícono blanco
       ),
     );
   }
@@ -190,10 +300,10 @@ class MySearchDelegate extends SearchDelegate {
                 eval["estado"],
                 style: TextStyle(
                   color: eval["estado"] == "Completada"
-                      ? Colors.green
+                      ? const Color.fromARGB(255, 4, 253, 12)
                       : eval["estado"] == "Vencida"
-                      ? Colors.red
-                      : const Color.fromARGB(255, 213, 248, 11),
+                      ? const Color.fromARGB(255, 247, 17, 1)
+                      : const Color.fromARGB(255, 217, 255, 2),
                   fontWeight: FontWeight.bold,
                 ),
               ),
