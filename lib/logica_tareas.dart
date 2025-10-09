@@ -145,9 +145,9 @@ class _EvaluacionesPageState extends State<EvaluacionesPage> {
   Color colorEstado(String estado) {
     switch (estado) {
       case "Completada":
-        return Colors.green;
+        return const Color.fromARGB(255, 4, 252, 12);
       case "Vencida":
-        return Colors.red;
+        return const Color.fromARGB(255, 247, 19, 2);
       case "Pendiente":
       default:
         return const Color.fromARGB(255, 213, 248, 11);
@@ -184,7 +184,7 @@ class _EvaluacionesPageState extends State<EvaluacionesPage> {
           }
           return AnimatedContainer(
             duration: const Duration(seconds: 2),
-            color: colorEstado(eval["estado"]).withOpacity(0.1),
+            color: colorEstado(eval["estado"]).withOpacity(0.3),
             child: ListTile(
               title: Text(eval["titulo"]),
               subtitle: Text(
@@ -198,7 +198,7 @@ class _EvaluacionesPageState extends State<EvaluacionesPage> {
                     style: TextStyle(color: colorEstado(eval["estado"])),
                   ),
                   IconButton(
-                    icon: const Icon(Icons.delete, color: Colors.red),
+                    icon: const Icon(Icons.highlight_remove, color: Colors.red),
                     onPressed: () {
                       setState(() {
                         evaluaciones.removeAt(index); // 👈 elimina la tarea
@@ -269,10 +269,10 @@ class MySearchDelegate extends SearchDelegate {
                 eval["estado"],
                 style: TextStyle(
                   color: eval["estado"] == "Completada"
-                      ? Colors.green
+                      ? const Color.fromARGB(255, 229, 235, 230)
                       : eval["estado"] == "Vencida"
-                      ? Colors.red
-                      : const Color.fromARGB(255, 213, 248, 11),
+                      ? const Color.fromARGB(255, 245, 241, 241)
+                      : const Color.fromARGB(255, 243, 243, 241),
                   fontWeight: FontWeight.bold,
                 ),
               ),

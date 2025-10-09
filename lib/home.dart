@@ -146,12 +146,12 @@ class _EvaluacionesPageState extends State<EvaluacionesPage> {
   Color colorEstado(String estado) {
     switch (estado) {
       case "Completada":
-        return const Color.fromARGB(255, 4, 252, 12);
+        return const Color.fromARGB(253, 45, 252, 4);
       case "Vencida":
-        return const Color.fromARGB(255, 247, 19, 2);
+        return const Color.fromARGB(255, 141, 0, 0);
       case "Pendiente":
       default:
-        return const Color.fromARGB(255, 213, 248, 11);
+        return const Color.fromARGB(255, 175, 149, 0);
     }
   }
 
@@ -187,7 +187,7 @@ class _EvaluacionesPageState extends State<EvaluacionesPage> {
                   eval["estado"] = "Vencida";
                 }
                 return AnimatedContainer(
-                  duration: const Duration(seconds: 2),
+                  duration: const Duration(milliseconds: 100),
                   color: colorEstado(eval["estado"]).withOpacity(0.3),
                   child: ListTile(
                     title: Text(eval["titulo"]),

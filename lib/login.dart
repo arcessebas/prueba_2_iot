@@ -46,7 +46,7 @@ class _LoginPageState extends State<LoginPage> {
     if (email == "admin@demo.com" && pass == "123456") {
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(builder: (context) => HomePage(username: email)),
+        MaterialPageRoute(builder: (context) => EvaluacionesPage()),
       );
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -61,7 +61,7 @@ class _LoginPageState extends State<LoginPage> {
       body: Container(
         decoration: const BoxDecoration(
           image: DecorationImage(
-            image: AssetImage("assets/images/fondo.jpg"), // Fondo
+            image: AssetImage(), // Fondo
             fit: BoxFit.cover,
           ),
         ),
